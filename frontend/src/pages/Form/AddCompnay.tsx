@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link} from 'react-router-dom';
 import { FaArrowRight } from "react-icons/fa6";
 import Breadcrumb from "../../components/Breadcrumb";
 const baseUrl = import.meta.env.VITE_BASE_APP_BACKEND_BASEURL;
@@ -101,12 +101,12 @@ const AddCompnay: React.FC = () => {
           <>
             <div>Company added successfully!</div>
             <div className="flex">
-              <button
-                onClick={() => navigate(`/company/${newCompanyId}`)}
-                className="text-primary ml-1 underline cursor-pointer"
-              >
-                View Company
-              </button>
+              <Link
+                        to={`/company/${newCompanyId}`}
+                        className="text-primary ml-1 underline cursor-pointer"
+                      >
+                        View Company
+                      </Link>
               <FaArrowRight className="mt-1 ml-2" />
             </div>
           </>,
