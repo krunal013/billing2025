@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from 'react-router-dom';
+import { NavLink , Link } from 'react-router-dom';
 // Define the company type
 interface Company {
   _id: string;
@@ -120,12 +120,12 @@ const CompanyList: React.FC = () => {
                 </a>
               </td>
               <td className="px-4 py-4">
-                <button
-                  onClick={() => handleViewProfile(company._id)}
-                  className="bg-successlight text-black py-2 px-3 rounded-lg hover:scale-105 transition duration-300"
-                >
-                  View Profile
-                </button>
+                <Link
+                        to={`/company/${company._id}`}
+                        className="text-primary ml-1 underline cursor-pointer"
+                      >
+                        View Company
+                      </Link>
               </td>
             </tr>
           ))
