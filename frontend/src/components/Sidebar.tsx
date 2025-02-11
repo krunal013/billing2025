@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
-import { RiFileAddFill } from "react-icons/ri";
-import { BsBuildingAdd } from "react-icons/bs";
-import { CiBoxList } from "react-icons/ci";
+import { RiFileAddFill } from 'react-icons/ri';
+import { BsBuildingAdd } from 'react-icons/bs';
+import { CiBoxList } from 'react-icons/ci';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -19,7 +19,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
   const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? true : storedSidebarExpanded === 'true'
+    storedSidebarExpanded === null ? true : storedSidebarExpanded === 'true',
   );
 
   useEffect(() => {
@@ -72,15 +72,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
   return (
     <aside
-    ref={sidebar}
-    className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-hidden bg-boxdark-3 transition-transform duration-300 ease-in-out dark:bg-boxdark ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:static lg:translate-x-0 ${sidebarOpen ? 'lg:block' : 'lg:hidden'}`}
-  >
+      ref={sidebar}
+      className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-hidden bg-boxdark-3 transition-transform duration-300 ease-in-out dark:bg-boxdark ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:static lg:translate-x-0 ${sidebarOpen ? 'lg:block' : 'lg:hidden'}`}
+    >
       {/* SIDEBAR HEADER */}
       <div className="flex items-center justify-between px-6 py-5.5 lg:py-6.5">
         <NavLink to="/">
-          <h2 className="text-3xl text-primary -mb-8">Ayvan Finserv</h2>
+          <h2 className="text-3xl ml-9 text-white font-bold tracking-wider -mb-8">
+            Triosphere
+          </h2>
         </NavLink>
-  
+
         <button
           ref={trigger}
           onClick={handleSidebarToggle}
@@ -128,7 +132,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             pathname.includes('dashboard')) &&
                           'bg-graydark dark:bg-meta-4'
                         }`}
-                        onClick={(e) => {
+                        onClick={(e: { preventDefault: () => void }) => {
                           e.preventDefault();
                           sidebarExpanded
                             ? handleClick()
@@ -161,15 +165,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           />
                         </svg>
                         <NavLink
-                              to="/"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-lg px-1 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
-                            Dashboard
-                            </NavLink>
-                       
+                          to="/"
+                          className={({ isActive }: { isActive: boolean }) =>
+                            'group relative flex items-center gap-2.5 rounded-lg px-1 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                            (isActive && '!text-white')
+                          }
+                        >
+                          Dashboard
+                        </NavLink>
                       </NavLink>
                       {/* <!-- Dropdown Menu Start --> */}
                       {/* <div
@@ -257,15 +260,44 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Profile --> */}
 
               {/* <!-- Menu Item Forms --> */}
-              <SidebarLinkGroup
+              <h3 className="mb-4 mt-3 ml-4 text-sm font-semibold text-bodydark2">
+                INVOICES
+              </h3>
+              <li>
+                <NavLink
+                  to="/forms/form"
+                  className={`group relative flex items-center gap-2.5 rounded-lg py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('form') && 'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  <RiFileAddFill /> Add Invoice
+                </NavLink>
+              </li>
+              {/* <!-- Menu Item add invoices --> */}
+
+              {/* <!-- Menu Item invoice List--> */}
+              <li>
+                <NavLink
+                  to="/InvoiceTable"
+                  className={`group relative flex items-center gap-2.5 rounded-lg py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes('InvoiceTable') &&
+                    'bg-graydark dark:bg-meta-4'
+                  }`}
+                >
+                  <CiBoxList /> Invoice List
+                </NavLink>
+              </li>
+
+              {/* <SidebarLinkGroup
                 activeCondition={
                   pathname === '/form/form' || pathname.includes('form/from') || pathname.includes('/InvoiceTable')
                 }
-              >
-                {(handleClick, open) => {
+              > */}
+
+              {/* {(handleClick, open) => {
                   return (
-                    <React.Fragment>
-                      <NavLink
+                    <React.Fragment> */}
+              {/* <NavLink
                         to="#"
                         className={`group relative flex items-center gap-2.5 rounded-lg py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           (pathname === '/form/form' || pathname.includes('/InvoiceTable') ||
@@ -326,9 +358,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                             fill=""
                           />
                         </svg>
-                      </NavLink>
-                      {/* <!-- Dropdown Menu Start --> */}
-                      <div
+                      </NavLink> */}
+              {/* <!-- Dropdown Menu Start --> */}
+              {/* <div
                         className={`translate transform overflow-hidden ${
                           !open && 'hidden'
                         }`}
@@ -379,13 +411,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                               Compnay List 
                             </NavLink>
                           </li> */}
-                        </ul>
-                      </div>
-                      {/* <!-- Dropdown Menu End --> */}
-                    </React.Fragment>
+              {/* </ul> */}
+              {/* </div> */}
+              {/* <!-- Dropdown Menu End --> */}
+              {/* </React.Fragment>
                   );
                 }}
-              </SidebarLinkGroup>
+              </SidebarLinkGroup> */}
               {/* <!-- Menu Item Forms --> */}
 
               {/* <!-- Menu Item Tables --> */}
@@ -426,18 +458,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               </li> */}
               {/* <!-- Menu Item Tables --> */}
 
-
-
+              <h3 className="mb-4 ml-4 mt-3 text-sm font-semibold text-bodydark2">
+                COMPNAY
+              </h3>
               {/* <!-- Menu Item add compnay --> */}
               <li>
                 <NavLink
                   to="/forms/AddCompnay"
                   className={`group relative flex items-center gap-2.5 rounded-lg py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('AddCompnay') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('AddCompnay') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
-                 
-                  <BsBuildingAdd />  Add Compnay
+                  <BsBuildingAdd /> Add Compnay
                 </NavLink>
               </li>
               {/* <!-- Menu Item add compnay --> */}
@@ -447,17 +480,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 <NavLink
                   to="/forms/CompList"
                   className={`group relative flex items-center gap-2.5 rounded-lg py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes('CompList') && 'bg-graydark dark:bg-meta-4'
+                    pathname.includes('CompList') &&
+                    'bg-graydark dark:bg-meta-4'
                   }`}
                 >
-                 
-                 <CiBoxList />  Compnay List
+                  <CiBoxList /> Compnay List
                 </NavLink>
               </li>
               {/* <!-- Menu Item compnay List--> */}
-
-
-              
             </ul>
           </div>
 
@@ -518,7 +548,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Ui Elements --> */}
 
               {/* <!-- Menu Item Auth Pages --> */}
-              
+
               {/* <!-- Menu Item Auth Pages --> */}
             </ul>
           </div>

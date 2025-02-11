@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const InvoiceSchema = new mongoose.Schema({
   invoiceid: { type: String, required: true },
   invoice_date: { type: Date, required: true },
-  invoice_number: { type: String, unique: true },
+  invoice_number: { type: String },
   company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Company",
@@ -13,7 +13,7 @@ const InvoiceSchema = new mongoose.Schema({
     {
       description: { type: String, required: true },
       amount: { type: Number, required: true },
-    },  
+    },
   ],
   ReimbursementExpenses: [
     {

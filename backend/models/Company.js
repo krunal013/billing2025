@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Invoice = require("./Invoice");
 
 const companySchema = mongoose.Schema(
-  {
+  { 
     companyName: { type: String, required: true },
     address: { type: String, required: true },
     gstNumber: { type: String, required: true },

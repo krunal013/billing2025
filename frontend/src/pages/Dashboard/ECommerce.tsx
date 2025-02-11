@@ -28,7 +28,6 @@ interface Invoices {
 }
 
 const currentYear = new Date().getFullYear();
-const currentMonth = new Date().getMonth() + 1;
 const baseUrl = import.meta.env.VITE_BASE_APP_BACKEND_BASEURL;
 const ECommerce: React.FC = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
