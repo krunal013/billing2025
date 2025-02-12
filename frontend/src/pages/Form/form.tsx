@@ -260,6 +260,9 @@ function Form() {
 
     updatedParticulars[particularIndex].total = subTotal.toFixed(2);
     setFormData({ ...formData, particulars: updatedParticulars });
+    if (field === 'amount') {
+      updateTotal();
+    }
   };
 
   const calculateTotal = (updatedParticulars: Particular[]) => {
@@ -316,6 +319,31 @@ function Form() {
     }
   };
 
+  const updateTotal = () => {
+    let grandTotal = 0;
+  
+    const updatedParticulars = formData.particulars.map((particular) => {
+      let subtotal = 0;
+  
+      particular.subParticulars.forEach((subParticular) => {
+        const amount = parseInt(subParticular.amount) || 0; // Default to 0 if empty
+        subtotal += amount;
+      });
+  
+      grandTotal += subtotal;
+  
+      return { ...particular, total: subtotal.toString() }; // Ensure string format
+    });
+  
+    setFormData((prev) => ({
+      ...prev,
+      particulars: updatedParticulars,
+      total: grandTotal.toString(),
+    }));
+  };
+  
+  
+
   const addCustomSubParticular = (particularIndex: number) => {
     const updatedParticulars = [...formData.particulars];
     updatedParticulars[particularIndex].subParticulars.push({
@@ -338,6 +366,7 @@ function Form() {
     updatedParticulars[particularIndex].total = subTotal.toFixed(2);
     setFormData({ ...formData, particulars: updatedParticulars });
     calculateTotal(updatedParticulars);
+    updateTotal();
   };
 
   const handlePDFDownload = async () => {
@@ -646,7 +675,7 @@ function Form() {
                                       <input
                                         type="text"
                                         placeholder="Amount"
-                                        value={subParticular.amount}
+                                        value={subParticular.amount ? parseInt(subParticular.amount) : 0}
                                         onChange={(e) =>
                                           handleSubParticularChange(
                                             index,
@@ -709,7 +738,7 @@ function Form() {
                           </button>
 
                           <p className="text-right tracking-wider text-lg font-semibold mt-4">
-                            Subtotal: ₹{particular.total}
+                            Subtotal: ₹{parseInt(particular.total)}
                           </p>
                         </div>
                       </div>
@@ -731,7 +760,7 @@ function Form() {
 
                     {/* Right-Aligned Total */}
                     <p className="text-right">
-                      Total Amount: ₹{formData.total}
+                      Total Amount: ₹{parseInt(formData.total)}
                     </p>
                   </div>
 
@@ -757,80 +786,106 @@ function Form() {
         </div>
 
         {showSummary && (
-         <div className="h-screen w-full max-w-[650px] mt-5 flex items-center justify-center">
-         <div className="w-full max-w-3xl bg-white rounded-2xl shadow-lg relative flex flex-col overflow-hidden">
-           
-    {/* Sticky Invoice Heading */}
-    <div className="sticky top-0 rounded-t-2xl border border-[#3c4fe01d] bg-white z-20 shadow-md w-full px-3 py-4">
-      <h2 className="text-3xl font-bold text-black text-left p-3">
-        Invoice Summary
-      </h2>
-    </div>
-
-    {/* Scrollable Content */}
-    <div className="flex-grow overflow-y-auto h-[calc(100vh-70px)] p-6 hide-scrollbar">
-      <div className={`transition-all duration-500 ease-in-out overflow-hidden ${
-        showSummary ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-      }`}>
-        {selectedCompanyDetails ? (
-          <div className="rounded-lg shadow-md overflow-y-auto h-[calc(100vh-100px)] mt-4 hide-scrollbar">
-            {/* Company Header */}
-            <h3 className="text-3xl font-bold text-primary mb-4">
-              {selectedCompanyDetails.companyName}
-            </h3>
-            {/* Company Details */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-black mb-6">
-              <p><span className="font-medium">CIN:</span> {selectedCompanyDetails.cinNumber}</p>
-              <p><span className="font-medium">GST:</span> {selectedCompanyDetails.gstNumber}</p>
-              <p><span className="font-medium">Contact:</span> {selectedCompanyDetails.contactNumber}</p>
-              <p><span className="font-medium">Address:</span> {selectedCompanyDetails.address}</p>
-            </div>
-
-            {/* Invoice Summary */}
-            <div className="bg-white p-4 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center md:text-left">
-                Invoice Summary
-              </h3>
-
-              <div className="space-y-4">
-                {formData.particulars.map((particular, index) => (
-                  <div key={index} className="bg-[#edf6ff] p-4 rounded-lg border border-[#daecff] shadow-sm">
-                    <p className="font-semibold text-gray-800">{particular.description}</p>
-                    <ul className="mt-3 space-y-2 text-gray-700">
-                      {particular.subParticulars.map((subParticular, subIndex) => (
-                        <li key={subIndex} className="flex justify-between items-center text-sm  pb-2">
-                          <span>{subParticular.description}</span>
-                          <span className="font-medium text-gray-900">₹{subParticular.amount}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <p className="text-right font-medium text-gray-900 mt-2">
-                      Subtotal: ₹{particular.total}
-                    </p>
-                  </div>
-                ))}
+          <div className="h-screen w-full max-w-[650px] mt-5 flex items-center justify-center">
+            <div className="w-full max-w-3xl bg-white rounded-2xl shadow-lg relative flex flex-col overflow-hidden">
+              {/* Sticky Invoice Heading */}
+              <div className="sticky top-0 rounded-t-2xl border border-[#3c4fe01d] bg-white z-20 shadow-md w-full px-3 py-4">
+                <h2 className="text-3xl font-bold text-black text-left p-3">
+                  Invoice Summary
+                </h2>
               </div>
 
-              <div className="text-right font-bold text-xl mt-6 mb-50 text-gray-900">
-                <p>Total Amount: ₹{formData.total}</p>
+              {/* Scrollable Content */}
+              <div className="flex-grow overflow-y-auto h-[calc(100vh-70px)] p-6 hide-scrollbar">
+                <div
+                  className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                    showSummary
+                      ? 'max-h-[500px] opacity-100'
+                      : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  {selectedCompanyDetails ? (
+                    <div className="rounded-lg shadow-md overflow-y-auto h-[calc(100vh-100px)] mt-4 hide-scrollbar">
+                      {/* Company Header */}
+                      <h3 className="text-3xl font-bold text-primary mb-4">
+                        {selectedCompanyDetails.companyName}
+                      </h3>
+                      {/* Company Details */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-black mb-6">
+                        <p>
+                          <span className="font-medium">CIN:</span>{' '}
+                          {selectedCompanyDetails.cinNumber}
+                        </p>
+                        <p>
+                          <span className="font-medium">GST:</span>{' '}
+                          {selectedCompanyDetails.gstNumber}
+                        </p>
+                        <p>
+                          <span className="font-medium">Contact:</span>{' '}
+                          {selectedCompanyDetails.contactNumber}
+                        </p>
+                        <p>
+                          <span className="font-medium">Address:</span>{' '}
+                          {selectedCompanyDetails.address}
+                        </p>
+                      </div>
+
+                      {/* Invoice Summary */}
+                      <div className="bg-white p-4 rounded-lg shadow-md">
+                        <h3 className="text-xl font-semibold text-gray-900 mb-4 text-center md:text-left">
+                          Invoice Summary
+                        </h3>
+
+                        <div className="space-y-4">
+                          {formData.particulars.map((particular, index) => (
+                            <div
+                              key={index}
+                              className="bg-[#edf6ff] p-4 rounded-lg border border-[#daecff] shadow-sm"
+                            >
+                              <p className="font-semibold text-gray-800">
+                                {particular.description}
+                              </p>
+                              <ul className="mt-3 space-y-2 text-gray-700">
+                                {particular.subParticulars.map(
+                                  (subParticular, subIndex) => (
+                                    <li
+                                      key={subIndex}
+                                      className="flex justify-between items-center text-sm  pb-2"
+                                    >
+                                      <span>{subParticular.description}</span>
+                                      <span className="font-medium text-gray-900">
+                                        ₹{subParticular.amount}
+                                      </span>
+                                    </li>
+                                  ),
+                                )}
+                              </ul>
+                              <p className="text-right font-medium text-gray-900 mt-2">
+                                Subtotal: ₹{particular.total}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="text-right font-bold text-xl mt-6 mb-50 text-gray-900">
+                          <p>Total Amount: ₹{formData.total}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="p-6 rounded-lg shadow-md text-center">
+                      <h3 className="text-xl font-bold text-black mb-2">
+                        No Company Selected
+                      </h3>
+                      <p className="text-black">
+                        Please select a company to view its details.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        ) : (
-          <div className="p-6 rounded-lg shadow-md text-center">
-            <h3 className="text-xl font-bold text-black mb-2">
-              No Company Selected
-            </h3>
-            <p className="text-black">
-              Please select a company to view its details.
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  </div>
-</div>
-
         )}
       </div>
     </>
