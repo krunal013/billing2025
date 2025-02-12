@@ -45,22 +45,32 @@ const styles = StyleSheet.create({
   logo: { width: 100, height: 70 },
   companyName: { fontSize: 20, fontWeight: 'bold', color: '#001f60' },
   companySubtitle: { fontSize: 12, color: '#001f60' },
+
   invoiceDetails: {
     marginBottom: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
   },
   detailsColumn: { alignItems: 'flex-start' },
   detailsColumnRight: { alignItems: 'flex-end' },
   row: {
     flexDirection: 'row',
-    gap: 5, // Adjust spacing between label and value
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
   },
-
+  inlineRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5, // Adds space between label and value
+  },
+  horizontalLine: {
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#232323',
+    marginVertical: 5,
+  },
   label: { fontSize: 12, fontWeight: 'bold' },
+  value: { fontSize: 12 },
+
   particularheadinglabel: { fontSize: 12, fontWeight: 'extralight' },
-  value: { fontSize: 12, marginBottom: 5 },
   particularsSection: {
     flex: 1,
     borderWidth: 1,
@@ -169,17 +179,25 @@ const styles = StyleSheet.create({
   footer: {
     paddingTop: 7,
     fontSize: 8,
+    fontWeight: 'bold', // Making it bold
   },
-  notes: { fontSize: 10, color: '#555', fontWeight: 'bold' },
+  notes: { fontSize: 10, fontWeight: 'bold' },
   contactInfo: {
     marginTop: 20,
     textAlign: 'center',
     fontSize: 10,
-    color: '#333333',
+    color: '#001f60', // Blue color
   },
   notedesc: {
-    marginLeft: 20,
+    marginLeft: 50,
   },
+  invoiceTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10, // Adds space between title and details section
+  },
+  
 });
 
 const InvoicePDF: React.FC<InvoicePDFProps> = ({ formData }) => {
@@ -189,6 +207,13 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ formData }) => {
     .map((_, index) => `[${alphabets[index]}]`)
     .join(' + ');
   const totalInWords = `${toWords(formData.total)} only`;
+
+  const formatDate = (dateString: string | number | Date) => {
+    const options = { day: '2-digit', month: 'short', year: 'numeric' };
+    return new Date(dateString)
+      .toLocaleDateString('en-GB', options)
+      .replace(',', '');
+  };
 
   return (
     <Document>
@@ -203,34 +228,50 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ formData }) => {
           <Image src={logo} style={styles.logo} />
         </View>
 
-        <View style={styles.invoiceDetails}>
-          <View style={styles.detailsColumn}>
-            <View style={styles.row}>
-              <Text style={styles.label}></Text>
-              <Text style={styles.value}></Text>
-            </View>
-            <View style={styles.row}>
-              <Text style={styles.label}>Company :</Text>
-              <Text style={styles.value}>{formData.company}</Text>
-            </View>
-          </View>
-          <View style={styles.detailsColumnRight}>
-            <View style={styles.row}>
-              <Text style={styles.label}>Invoice No. :</Text>
-              <Text style={styles.value}>{formData.invoiceNo}</Text>
-            </View>
+        <Text style={styles.invoiceTitle}>Invoice</Text>
 
-            <View style={styles.row}>
-              <Text style={styles.label}>Invoice Date :</Text>
-              <Text style={styles.value}>{formData.invoiceDate}</Text>
+        <View style={styles.invoiceDetails}>
+          {/* First Row - "To" at Start, Invoice Date at Right */}
+          <View style={styles.row}>
+            <View style={styles.detailsColumn}>
+              <Text style={styles.label}>To</Text>
+            </View>
+            <View style={styles.detailsColumnRight}>
+              <View style={styles.inlineRow}>
+                <Text style={styles.label}>Date -</Text>
+                <Text style={styles.value}>
+                  {formatDate(formData.invoiceDate)}
+                </Text>
+              </View>
             </View>
           </View>
+
+          {/* Horizontal Line */}
+          <View style={styles.horizontalLine} />
+
+          {/* Second Row - Company Name at Left & Invoice No. at Right */}
+          <View style={styles.row}>
+            <View style={styles.detailsColumn}>
+              <View style={styles.inlineRow}>
+                {/* <Text style={styles.label}></Text> */}
+                <Text style={styles.value}>{formData.company}</Text>
+              </View>
+            </View>
+            <View style={styles.detailsColumnRight}>
+              <View style={styles.inlineRow}>
+                <Text style={styles.label}>Invoice No. -</Text>
+                <Text style={styles.value}>{formData.invoiceNo}</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.horizontalLine} />
         </View>
 
         <View style={styles.particularsSection}>
           <View style={styles.particularsHeader}>
             <Text style={styles.particularsHeaderTextp}>Particulars</Text>
-            <Text style={styles.particularsHeaderText}>₹ Amount</Text>
+            <Text style={styles.particularsHeaderText}>Rs. Amount</Text>
           </View>
           <View style={styles.verticalLine} />
           {formData.particulars.map((particular, index) => (
@@ -262,7 +303,8 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ formData }) => {
           <View style={styles.totalsection}>
             <View style={styles.grandTotalContainer}>
               <Text style={styles.grandTotalWords}>
-                {totalInWords.toUpperCase()} : {grandTotalFormula}
+                {totalInWords.toUpperCase()} :{' '}
+                <Text style={{ marginLeft: 60 }}>{grandTotalFormula}</Text>
               </Text>
               <Text style={styles.grandTotal}>{formData.total}</Text>
             </View>
@@ -271,13 +313,16 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ formData }) => {
 
         <View style={styles.footer}>
           <Text style={styles.notes}>
-            <Text style={{ fontWeight: 'bold' }}>
+            <Text style={{ fontWeight: 'extrabold', fontSize: 12 }}>
               For, Chintan I. Patel & Associates
             </Text>
             {'\n\n\n'}
-            <Text style={{ fontWeight: 'bold' }}>Chintan Patel</Text>
+            <Text style={{ fontWeight: 'bold', fontSize: 12 }}>
+              Chintan Patel
+            </Text>
             {'\n'}
             Proprietor{'\n'}
+            {'\n'}
             <Text style={{ fontWeight: 'bold' }}>Notes:</Text>
             {'\n'}
             1. Issue cheque in favor of “Chintan I. Patel & Associates”
@@ -287,10 +332,10 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({ formData }) => {
             3. Banking detail for direct credit is as under:
             {'\n'}
             <Text style={styles.notedesc}>
-              Beneficiary: Chintan I. Patel & Associates | Account No:
-              9909102529 | IFSC: KKBK0002588 | MICR Code: 380485035 | Bank Name
-              & address: Kotak Mahindra Bank, Kalpana Complex, Mamnagar Fire
-              Station, Navrangpura, Ahmedabad
+              &nbsp;&nbsp;&nbsp; Beneficiary: Chintan I. Patel & Associates |
+              Account No: 9909102529 | IFSC: KKBK0002588 | MICR Code: 380485035
+              &nbsp;&nbsp;&nbsp; Bank Name & address: Kotak Mahindra Bank,
+              Kalpana Complex, Mamnagar Fire Station, Navrangpura, Ahmedabad
             </Text>
           </Text>
           <Text style={styles.contactInfo}>
